@@ -17,7 +17,6 @@ export default function Center(props) {
     const disY = endY - start[1];
 
     const selectedCmp = canvas.getSelectedCmp();
-    console.log("xxxx", selectedCmp);
     const oldStyle = selectedCmp.style;
     const top = oldStyle.top + disY;
     const left = oldStyle.left + disX;
@@ -33,11 +32,11 @@ export default function Center(props) {
   return (
     <div className={styles.main}>
       <div
-        className={{
-          ...styles.canvas,
+        className={styles.canvas}
+        style={{
+          ...canvasData.style,
           backgroundImage: `url(${canvasData.style.backgroundImage})`,
         }}
-        style={canvasData.style}
         onDrop={onDrop}
         onDragOver={allowDrop}
       >
@@ -45,7 +44,7 @@ export default function Center(props) {
           <Cmp
             key={cmp.key}
             cmp={cmp}
-            selected={selectedIndex == index}
+            selected={selectedIndex === index}
             index={index}
           />
         ))}

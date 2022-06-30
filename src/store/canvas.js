@@ -59,7 +59,7 @@ export default class Canvas {
   };
 
   setSelectedCmpIndex = (index) => {
-    if (this.selectedCmpIndex == index) {
+    if (this.selectedCmpIndex === index) {
       return;
     }
     this.selectedCmpIndex = index;
@@ -99,7 +99,7 @@ export default class Canvas {
     this.listeners.push(listener);
     // 取消订阅
     return () => {
-      this.listeners = this.listeners.filter((lis) => lis != listener);
+      this.listeners = this.listeners.filter((lis) => lis !== listener);
     };
   };
 
