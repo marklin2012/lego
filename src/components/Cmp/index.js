@@ -11,7 +11,7 @@ export default class Cmp extends Component {
   static contextType = CanvasContext;
 
   onDragStart = (e) => {
-    this.setSelected();
+    this.setSelected(e);
     // 拖拽的开始位置
     const startX = e.pageX;
     const startY = e.pageY;
@@ -19,7 +19,8 @@ export default class Cmp extends Component {
     e.dataTransfer.setData("text", startX + "," + startY);
   };
 
-  setSelected = () => {
+  setSelected = (e) => {
+    e.stopPropagation();
     this.context.setSelectedCmpIndex(this.props.index);
   };
 
@@ -30,7 +31,6 @@ export default class Cmp extends Component {
       return;
     }
 
-    console.log("xxxx");
     e.stopPropagation();
     e.preventDefault();
 
