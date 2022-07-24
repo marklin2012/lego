@@ -123,6 +123,7 @@ export default class Canvas {
   getPublicCanvas = () => {
     const obj = {
       getCanvas: this.getCanvas,
+      setCanvas: this.setCanvas,
       getCanvasCmps: this.getCanvasCmps,
       addCmp: this.addCmp,
       subscribe: this.subscribe,

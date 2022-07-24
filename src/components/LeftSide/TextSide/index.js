@@ -1,7 +1,7 @@
-import { isTextComponent } from "../../layout/Left";
-import { useCanvasByContext } from "../../store/hooks";
-import { defaultCommonStyle } from "../../utils/const";
-import styles from "./index.less";
+import { isTextComponent } from "../../../layout/Left";
+import { useCanvasByContext } from "../../../store/hooks";
+import { defaultCommonStyle } from "../../../utils/const";
+import styles from "../index.less";
 
 const defaultStyle = {
   ...defaultCommonStyle,

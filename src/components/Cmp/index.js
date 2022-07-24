@@ -45,7 +45,6 @@ export default class Cmp extends Component {
 
       let disX = x - startX;
       let disY = y - startY;
-      console.log(`disX: ${disX},disY: ${disY}`);
 
       let newStyle = {};
       if (direction.indexOf("top") >= 0) {
@@ -59,11 +58,26 @@ export default class Cmp extends Component {
         newStyle.left = cmp.style.left - disX;
       }
 
+      const newHeight = cmp.style.height + disY;
+
       Object.assign(newStyle, {
         width: cmp.style.width + disX,
-        height: cmp.style.height + disY,
+        height: newHeight,
       });
-      console.log("newStyle", newStyle);
+
+      if (cmp.style.fontSize) {
+        // 文本组件的行高，字体大小随高度变化
+        const n = newHeight / cmp.style.height;
+        let newFontSize = n * cmp.style.fontSize;
+        newFontSize =
+          newFontSize < 12 ? 12 : newFontSize > 130 ? 130 : newFontSize;
+        Object.assign(newStyle, {
+          width: cmp.style.width + disX,
+          lineHeight: newHeight + "px",
+          fontSize: newFontSize,
+        });
+      }
+
       this.context.updateSelectedCmp(newStyle);
       // 重设起始位置
       startX = x;
