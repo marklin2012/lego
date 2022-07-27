@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import { useState, useEffect } from "react";
+import GraphSide from "../../components/LeftSide/GraphSide";
 import ImgSide from "../../components/LeftSide/ImgSide";
 import TextSide from "../../components/LeftSide/TextSide";
 import TplSide from "../../components/LeftSide/TplSide";
@@ -8,6 +9,7 @@ import styles from "./index.less";
 export const isTplSide = "TplSide";
 export const isTextComponent = 1;
 export const isImgComponent = 2;
+export const isGraphComponent = 3;
 
 export default function Left(props) {
   const [showSide, setShowSide] = useState(0);
@@ -55,10 +57,20 @@ export default function Left(props) {
         >
           <span>图片</span>
         </li>
+        <li
+          className={classNames(
+            styles.cmp,
+            showSide === isGraphComponent ? styles.selected : ""
+          )}
+          onClick={() => _setShowSide(isGraphComponent)}
+        >
+          <span>图形</span>
+        </li>
       </ul>
       {showSide === isTextComponent && <TextSide />}
       {showSide === isImgComponent && <ImgSide />}
       {showSide === isTplSide && <TplSide />}
+      {showSide === isGraphComponent && <GraphSide />}
     </div>
   );
 }
