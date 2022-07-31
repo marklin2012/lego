@@ -36,6 +36,10 @@ export default function GraphSide() {
   const addCmp = (_cmp) => {
     canvas.addCmp(_cmp);
   };
+
+  const onDragStart = (e, _cmp) => {
+    e.dataTransfer.setData("drag-cmp", JSON.stringify(_cmp));
+  };
   return (
     <div className={leftSideStyles.main}>
       <ul className={leftSideStyles.box}>
@@ -50,6 +54,10 @@ export default function GraphSide() {
               borderColor: item.style.borderColor,
             }}
             onClick={() => addCmp({ ...item, type: isGraphComponent })}
+            draggable="true"
+            onDragStart={(e) =>
+              onDragStart(e, { ...item, type: isGraphComponent })
+            }
           />
         ))}
       </ul>

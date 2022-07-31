@@ -10,13 +10,51 @@ import Text from "../Text";
 export default class Cmp extends Component {
   static contextType = CanvasContext;
 
-  onDragStart = (e) => {
-    this.setSelected(e);
-    // 拖拽的开始位置
-    const startX = e.pageX;
-    const startY = e.pageY;
+  // onDragStart = (e) => {
+  //   this.setSelected(e);
+  //   // 拖拽的开始位置
+  //   const startX = e.pageX;
+  //   const startY = e.pageY;
 
-    e.dataTransfer.setData("text", startX + "," + startY);
+  //   e.dataTransfer.setData("text", startX + "," + startY);
+  // };
+
+  onMouseDownOfCmp = (e) => {
+    // 关闭，否则会触发其他组件的选中行为
+    e.preventDefault();
+
+    let startX = e.pageX;
+    let startY = e.pageY;
+
+    const { cmp, zoom } = this.props;
+    const move = (e) => {
+      const x = e.pageX;
+      const y = e.pageY;
+
+      let disX = x - startX;
+      let disY = y - startY;
+
+      disX = disX * (100 / zoom);
+      disY = disY * (100 / zoom);
+
+      const oldStyle = cmp;
+
+      const top = cmp.style.top + disY;
+      const left = cmp.style.left + disX;
+
+      this.context.updateSelectedCmp({ top, left });
+
+      startX = x;
+      startY = y;
+    };
+
+    const up = () => {
+      document.removeEventListener("mousemove", move);
+      document.removeEventListener("moseup", up);
+    };
+
+    document.addEventListener("mousemove", move);
+    document.addEventListener("mouseup", up);
   };
 
   setSelected = (e) => {
@@ -140,9 +178,11 @@ export default class Cmp extends Component {
     const transform = `rotate(${style.transform}deg)`;
     return (
       <div
+        id={cmp.key}
         className={styles.main}
-        draggable={true}
-        onDragStart={this.onDragStart}
+        // draggable={true}
+        // onDragStart={this.onDragStart}
+        onMouseDown={this.onMouseDownOfCmp}
         onClick={this.setSelected}
       >
         {/* 组件本身 */}

@@ -8,22 +8,50 @@ export default function Center(props) {
   const canvas = useCanvasByContext();
   const canvasData = canvas.getCanvas();
   const { style, cmps } = canvasData;
-  const onDrop = useCallback((e) => {
-    // 拖拽的开始位置
-    const endX = e.pageX;
-    const endY = e.pageY;
 
-    const start = e.dataTransfer.getData("text").split(",");
-    const disX = endX - start[0];
-    const disY = endY - start[1];
+  // 缩放比例
+  const [zoom, setZoom] = useState(() =>
+    parseInt(canvasData.style.width) > 800 ? 50 : 100
+  );
 
-    const selectedCmp = canvas.getSelectedCmp();
-    const oldStyle = selectedCmp.style;
-    const top = oldStyle.top + disY;
-    const left = oldStyle.left + disX;
+  const onDrop = useCallback(
+    (e) => {
+      // 拖拽的开始位置
+      const endX = e.pageX;
+      const endY = e.pageY;
 
-    canvas.updateSelectedCmp({ top, left });
-  }, []);
+      let dragCmp = e.dataTransfer.getData("drag-cmp");
+      if (!dragCmp) {
+        console.log("none exist");
+        return;
+      }
+
+      dragCmp = JSON.parse(dragCmp);
+      console.log(
+        "xxx: ",
+        document.body.clientWidth / 2 - (style.width / 2) * (zoom / 100)
+      );
+      // 画布位置
+      const canvasDOMPos = {
+        top: 110,
+        left: document.body.clientWidth / 2 - (style.width / 2) * (zoom / 100),
+      };
+
+      const startX = canvasDOMPos.left;
+      const startY = canvasDOMPos.top;
+
+      let disX = endX - startX;
+      let disY = endY - startY;
+
+      disX = disX * (100 / zoom);
+      disY = disY * (100 / zoom);
+      dragCmp.style.left = disX - dragCmp.style.width / 2;
+      dragCmp.style.top = disY - dragCmp.style.height / 2;
+
+      canvas.addCmp(dragCmp);
+    },
+    [zoom, style.width]
+  );
 
   const allowDrop = useCallback((e) => {
     e.preventDefault();
@@ -39,8 +67,6 @@ export default function Center(props) {
   }, []);
 
   const whichKeyEvent = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
     const selectedCmp = canvas.getSelectedCmp();
     if (!selectedCmp) {
       return;
@@ -50,19 +76,21 @@ export default function Center(props) {
       return;
     }
 
+    e.preventDefault();
+    e.stopPropagation();
     const { top, left } = selectedCmp.style;
     const newStyle = { top, left };
     switch (e.keyCode) {
-      case 37:
+      case 37: // 左
         newStyle.left -= 1;
         break;
-      case 38:
+      case 38: // 上
         newStyle.top -= 1;
         break;
-      case 39:
+      case 39: // 右
         newStyle.left += 1;
         break;
-      case 40:
+      case 40: // 下
         newStyle.top += 1;
         break;
       default:
@@ -71,10 +99,6 @@ export default function Center(props) {
     canvas.updateSelectedCmp(newStyle);
   };
 
-  // 缩放比例
-  const [zoom, setZoom] = useState(() =>
-    parseInt(canvasData.style.width) > 800 ? 50 : 100
-  );
   return (
     <div id="center" className={styles.main} tabIndex="0">
       <div
@@ -93,6 +117,7 @@ export default function Center(props) {
             cmp={cmp}
             selected={selectedIndex === index}
             index={index}
+            zoom={zoom}
           />
         ))}
       </div>
