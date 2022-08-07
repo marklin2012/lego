@@ -1,42 +1,85 @@
 import { getOnlyKey } from "../utils";
 
-const defaultCanvas = {
-  style: {
-    width: 320,
-    height: 568,
-    backgroundColor: "#ffffff00",
-    backgroundImage: "",
-    backgroundPosition: "center",
-    backgroundSize: "cover",
-    backgroundRepeat: "no-repeat",
-    boxSizing: "content-box",
-  },
-  cmps: [],
-  // cmps: [
-  //   {
-  //     key: getOnlyKey(),
-  //     desc: "文本",
-  //     value: "文本",
-  //     style: {
-  //       position: "absolute",
-  //       top: 0,
-  //       left: 0,
-  //       width: 100,
-  //       height: 30,
-  //       fontSize: 12,
-  //       color: "red",
-  //     },
-  //   },
-  // ],
-};
+function getDefaultCanvas() {
+  return {
+    style: {
+      width: 320,
+      height: 568,
+      backgroundColor: "#ffffff00",
+      backgroundImage: "",
+      backgroundPosition: "center",
+      backgroundSize: "cover",
+      backgroundRepeat: "no-repeat",
+      boxSizing: "content-box",
+    },
+    cmps: [],
+  };
+}
 
 export default class Canvas {
-  constructor(_canvas = defaultCanvas) {
+  constructor(_canvas = getDefaultCanvas()) {
     this.canvas = _canvas; // 页面数据
     // 被选中组件的下标
     this.selectedCmpIndex = null;
     this.listeners = [];
+    // 画布历史初始值
+    this.canvasChangeHistory = [JSON.stringify(this.canvas)];
+    // 方便进行前进和后退
+    this.canvasChangeHistoryIndex = 0;
+
+    // 最大记录100条数据
+    this.maxCanvasChangeHistory = 100;
   }
+
+  // 历史记录
+  recordCanvasChangeHistory = () => {
+    this.canvasChangeHistory[++this.canvasChangeHistoryIndex] = JSON.stringify(
+      this.canvas
+    );
+    this.canvasChangeHistory = this.canvasChangeHistory.slice(
+      0,
+      this.canvasChangeHistoryIndex + 1
+    );
+
+    // 最多记录100条
+    if (this.canvasChangeHistory.length > this.maxCanvasChangeHistory) {
+      this.canvasChangeHistory.shift();
+      this.canvasChangeHistoryIndex--;
+    }
+  };
+
+  goPrevCanvasHistory = () => {
+    let newIndex = this.canvasChangeHistoryIndex - 1;
+    if (newIndex < 0) {
+      newIndex = 0;
+    }
+    console.log("prev:", this.canvasChangeHistory);
+    console.log("prevIndex:", newIndex);
+    if (this.canvasChangeHistoryIndex === newIndex) {
+      return;
+    }
+    this.canvasChangeHistoryIndex = newIndex;
+    const newCanvas = JSON.parse(this.canvasChangeHistory[newIndex]);
+    this.canvas = newCanvas;
+    this.updateApp();
+  };
+
+  goNextCanvasHistory = () => {
+    let newIndex = this.canvasChangeHistoryIndex + 1;
+    if (newIndex >= this.canvasChangeHistory.length) {
+      newIndex = this.canvasChangeHistory.length - 1;
+    }
+
+    console.log("next:", this.canvasChangeHistory);
+    console.log("nextIndex:", newIndex);
+    if (this.canvasChangeHistoryIndex === newIndex) {
+      return;
+    }
+    this.canvasChangeHistoryIndex = newIndex;
+    const newCanvas = JSON.parse(this.canvasChangeHistory[newIndex]);
+    this.canvas = newCanvas;
+    this.updateApp();
+  };
 
   // get
   getCanvas = () => {
@@ -68,7 +111,14 @@ export default class Canvas {
 
   // set
   setCanvas = (_canvas) => {
-    Object.assign(this.canvas, _canvas);
+    if (_canvas) {
+      Object.assign(this.canvas, _canvas);
+    } else {
+      this.canvas = getDefaultCanvas();
+    }
+    this.updateApp();
+    // 记录历史记录
+    this.recordCanvasChangeHistory();
   };
 
   // 新增组件
@@ -80,6 +130,8 @@ export default class Canvas {
     this.setSelectedCmpIndex(this.canvas.cmps.length - 1);
     // 3.更新组件
     this.updateApp();
+    // 记录历史记录
+    this.recordCanvasChangeHistory();
   };
 
   updateCanvasStyle = (newStyle) => {
@@ -88,6 +140,8 @@ export default class Canvas {
       ...newStyle,
     };
     this.updateApp();
+    // 记录历史记录
+    this.recordCanvasChangeHistory();
   };
 
   updateApp = () => {
@@ -132,6 +186,9 @@ export default class Canvas {
       updateCanvasStyle: this.updateCanvasStyle,
       getSelectedCmp: this.getSelectedCmp,
       getSelectedCmpIndex: this.getSelectedCmpIndex,
+      recordCanvasChangeHistory: this.recordCanvasChangeHistory,
+      goPrevCanvasHistory: this.goPrevCanvasHistory,
+      goNextCanvasHistory: this.goNextCanvasHistory,
     };
     return obj;
   };

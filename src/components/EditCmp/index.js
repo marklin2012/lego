@@ -11,14 +11,14 @@ export default function EditCmp(props) {
   const handleValueChange = (e) => {
     const newValue = e.target.value;
     canvas.updateSelectedCmp(null, newValue);
+    canvas.recordCanvasChangeHistory();
   };
 
   const handleStyleChange = (e, { name, value }) => {
     const newStyle = { [name]: value };
     canvas.updateSelectedCmp(newStyle);
+    canvas.recordCanvasChangeHistory();
   };
-
-  console.log("style:", style);
 
   return (
     <div className={styles.main}>

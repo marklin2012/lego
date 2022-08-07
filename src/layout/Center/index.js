@@ -22,15 +22,11 @@ export default function Center(props) {
 
       let dragCmp = e.dataTransfer.getData("drag-cmp");
       if (!dragCmp) {
-        console.log("none exist");
         return;
       }
 
       dragCmp = JSON.parse(dragCmp);
-      console.log(
-        "xxx: ",
-        document.body.clientWidth / 2 - (style.width / 2) * (zoom / 100)
-      );
+
       // 画布位置
       const canvasDOMPos = {
         top: 110,
@@ -62,7 +58,7 @@ export default function Center(props) {
     document.getElementById("center").addEventListener("click", () => {
       canvas.setSelectedCmpIndex(-1);
     });
-    document.getElementById("center").onkeydown = whichKeyEvent;
+    document.onkeydown = whichKeyEvent;
     return () => {};
   }, []);
 
@@ -97,6 +93,8 @@ export default function Center(props) {
         break;
     }
     canvas.updateSelectedCmp(newStyle);
+    // 记录历史
+    canvas.recordCanvasChangeHistory();
   };
 
   return (

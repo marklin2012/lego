@@ -7,21 +7,76 @@ const defaultStyle = {
   ...defaultCommonStyle,
 };
 
+const url = "http://150.158.30.131:8181/";
+
 const settings = [
   {
-    value: "http://150.158.30.131:8181/certificate.jpg",
+    value: url + "react-head.png",
+    style: defaultStyle,
+  },
+
+  {
+    value: url + "bg1.png",
     style: defaultStyle,
   },
   {
-    value: "http://150.158.30.131:8181/chuliu.jpeg",
+    value: url + "bg2.png",
     style: defaultStyle,
   },
   {
-    value: "http://150.158.30.131:8181/tiger.png",
+    value: url + "blue-star.png",
     style: defaultStyle,
   },
   {
-    value: "http://150.158.30.131:8181/hua.png",
+    value: url + "yellow-star.png",
+    style: defaultStyle,
+  },
+  {
+    value: url + "book.png",
+    style: defaultStyle,
+  },
+
+  {
+    value: url + "dancer.png",
+    style: defaultStyle,
+  },
+  {
+    value: url + "girl.png",
+    style: defaultStyle,
+  },
+  {
+    value: url + "red-girl.png",
+    style: defaultStyle,
+  },
+  {
+    value: url + "icon.png",
+    style: defaultStyle,
+  },
+
+  {
+    value: url + "lock.png",
+    style: defaultStyle,
+  },
+
+  {
+    value: url + "tree.png",
+    style: defaultStyle,
+  },
+
+  {
+    value: url + "certificate.jpg",
+    style: defaultStyle,
+  },
+  {
+    value: url + "chuliu.jpeg",
+    style: defaultStyle,
+  },
+  {
+    value: url + "tiger.png",
+    style: defaultStyle,
+  },
+  {
+    value: url + "hua.png",
     style: defaultStyle,
   },
 ];
@@ -31,6 +86,10 @@ export default function ImgSide() {
   const addCmp = (_cmp) => {
     canvas.addCmp(_cmp);
   };
+
+  const onDragStart = (e, _cmp) => {
+    e.dataTransfer.setData("drag-cmp", JSON.stringify(_cmp));
+  };
   return (
     <div className={styles.main}>
       <ul className={styles.box}>
@@ -39,6 +98,9 @@ export default function ImgSide() {
             className={styles.item}
             key={item.value}
             onClick={() => addCmp({ ...item, type: isImgComponent })}
+            onDragStart={(e) =>
+              onDragStart(e, { ...item, type: isImgComponent })
+            }
           >
             <img src={item.value} alt="" />
           </li>

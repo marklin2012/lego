@@ -45,12 +45,14 @@ export default function GraphSide() {
       <ul className={leftSideStyles.box}>
         {settings.map((item, index) => (
           <li
-            key={"graph" + index}
+            key={"item" + index}
             className={leftSideStyles.item}
             style={{
               width: item.style.width,
               height: item.style.height,
               backgroundColor: item.style.backgroundColor,
+              borderStyle: item.style.borderStyle,
+              borderStyle: item.style.borderStyle,
               borderColor: item.style.borderColor,
             }}
             onClick={() => addCmp({ ...item, type: isGraphComponent })}

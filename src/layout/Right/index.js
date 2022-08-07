@@ -1,3 +1,4 @@
+import { useState } from "react";
 import EditCanvas from "../../components/EditCanvas";
 import EditCmp from "../../components/EditCmp";
 import { useCanvasByContext } from "../../store/hooks";
@@ -7,5 +8,19 @@ export default function Right(props) {
   const canvas = useCanvasByContext();
   const selectedCmp = canvas.getSelectedCmp();
 
-  return selectedCmp ? <EditCmp /> : <EditCanvas />;
+  const [showEdit, setShowEdit] = useState(true);
+
+  return (
+    <div className={styles.main}>
+      <div
+        className={styles.switch}
+        onClick={() => {
+          setShowEdit(!showEdit);
+        }}
+      >
+        {showEdit ? "隐藏编辑区域" : "显示编辑区域"}
+      </div>
+      {showEdit && (selectedCmp ? <EditCmp /> : <EditCanvas />)}
+    </div>
+  );
 }

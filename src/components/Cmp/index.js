@@ -50,7 +50,8 @@ export default class Cmp extends Component {
 
     const up = () => {
       document.removeEventListener("mousemove", move);
-      document.removeEventListener("moseup", up);
+      document.removeEventListener("mouseup", up);
+      this.context.recordCanvasChangeHistory();
     };
 
     document.addEventListener("mousemove", move);
@@ -125,7 +126,8 @@ export default class Cmp extends Component {
     const up = () => {
       // 删除事件
       document.removeEventListener("mousemove", move);
-      document.removeEventListener("mousemup", up);
+      document.removeEventListener("mouseup", up);
+      this.context.recordCanvasChangeHistory();
     };
 
     document.addEventListener("mousemove", move);
@@ -164,7 +166,8 @@ export default class Cmp extends Component {
     const up = () => {
       // 删除事件
       document.removeEventListener("mousemove", move);
-      document.removeEventListener("mousemup", up);
+      document.removeEventListener("mouseup", up);
+      this.context.recordCanvasChangeHistory();
     };
 
     document.addEventListener("mousemove", move);
@@ -286,5 +289,7 @@ function getCmp(cmp) {
       return <Text {...cmp} />;
     case isImgComponent:
       return <Img {...cmp} />;
+    default:
+      break;
   }
 }
