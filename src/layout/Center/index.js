@@ -55,14 +55,15 @@ export default function Center(props) {
 
   const selectedIndex = canvas.getSelectedCmpIndex();
   useEffect(() => {
-    document.getElementById("center").addEventListener("click", () => {
-      canvas.setSelectedCmpIndex(-1);
-    });
     document.onkeydown = whichKeyEvent;
     return () => {};
   }, []);
 
   const whichKeyEvent = (e) => {
+    if (e.target.nodeName === "INPUT") {
+      return;
+    }
+
     const selectedCmp = canvas.getSelectedCmp();
     if (!selectedCmp) {
       return;
@@ -98,8 +99,16 @@ export default function Center(props) {
   };
 
   return (
-    <div id="center" className={styles.main} tabIndex="0">
+    <div
+      id="center"
+      className={styles.main}
+      tabIndex="0"
+      onClick={() => {
+        canvas.setSelectedCmpIndex(-1);
+      }}
+    >
       <div
+        id="canvas"
         className={styles.canvas}
         style={{
           ...canvasData.style,

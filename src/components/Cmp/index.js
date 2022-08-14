@@ -5,20 +5,19 @@ import { CanvasContext } from "../../context";
 import { isImgComponent, isTextComponent } from "../../layout/Left";
 import Img from "../Img";
 import Text from "../Text";
+import ContextMenu from "./ContextMenu";
 
 // TODO: 拖拽，删除，改变层级关系
 export default class Cmp extends Component {
   static contextType = CanvasContext;
 
-  // onDragStart = (e) => {
-  //   this.setSelected(e);
-  //   // 拖拽的开始位置
-  //   const startX = e.pageX;
-  //   const startY = e.pageY;
-
-  //   e.dataTransfer.setData("text", startX + "," + startY);
-  // };
-
+  constructor(props) {
+    super(props);
+    this.state = {
+      showContextMenu: false,
+    };
+  }
+  // 在画布上移动组件位置
   onMouseDownOfCmp = (e) => {
     // 关闭，否则会触发其他组件的选中行为
     e.preventDefault();
@@ -73,7 +72,7 @@ export default class Cmp extends Component {
     e.stopPropagation();
     e.preventDefault();
 
-    const { cmp } = this.props;
+    const { cmp, zoom } = this.props;
 
     let startX = e.pageX;
     let startY = e.pageY;
@@ -84,6 +83,9 @@ export default class Cmp extends Component {
 
       let disX = x - startX;
       let disY = y - startY;
+
+      disX = disX * (100 / zoom);
+      disY = disY * (100 / zoom);
 
       let newStyle = {};
       if (direction.indexOf("top") >= 0) {
@@ -103,6 +105,13 @@ export default class Cmp extends Component {
         width: cmp.style.width + disX,
         height: newHeight,
       });
+
+      if (newStyle.width < 10) {
+        newStyle.width = 10;
+      }
+      if (newStyle.height < 10) {
+        newStyle.height = 10;
+      }
 
       if (cmp.style.fontSize) {
         // 文本组件的行高，字体大小随高度变化
@@ -138,12 +147,15 @@ export default class Cmp extends Component {
     e.stopPropagation();
     e.preventDefault();
 
-    const { style } = this.props.cmp;
+    const { cmp, zoom } = this.props;
+    const { style } = cmp;
     const { width, height, transform } = style;
-
     const trans = parseFloat(transform);
+
     const r = height / 2;
+
     const ang = ((trans + 90) * Math.PI) / 180;
+
     const [offsetX, offsetY] = [-Math.cos(ang) * r, -Math.sin(ang) * r];
 
     let startX = e.pageX + offsetX;
@@ -155,6 +167,9 @@ export default class Cmp extends Component {
 
       let disX = x - startX;
       let disY = y - startY;
+
+      disX = disX * (100 / zoom);
+      disY = disY * (100 / zoom);
 
       let deg = (360 * Math.atan2(disY, disX)) / (2 * Math.PI) - 90;
       deg = deg.toFixed(2);
@@ -174,8 +189,13 @@ export default class Cmp extends Component {
     document.addEventListener("mouseup", up);
   };
 
+  handleShowContextMenu = (e) => {
+    e.preventDefault();
+    this.setState({ showContextMenu: true });
+  };
+
   render() {
-    const { cmp, selected } = this.props;
+    const { cmp, selected, zoom, index } = this.props;
     const { style, value } = cmp;
     const { width, height } = style;
     const transform = `rotate(${style.transform}deg)`;
@@ -187,6 +207,7 @@ export default class Cmp extends Component {
         // onDragStart={this.onDragStart}
         onMouseDown={this.onMouseDownOfCmp}
         onClick={this.setSelected}
+        onContextMenu={this.handleShowContextMenu}
       >
         {/* 组件本身 */}
         <div className={styles.cmp} style={{ ...style, transform }}>
@@ -209,7 +230,7 @@ export default class Cmp extends Component {
         >
           <li
             className={styles.stretchDot}
-            style={{ top: -8, left: -8 }}
+            style={{ top: -8, left: -8, transform: `scale(${100 / zoom})` }}
             data-direction="top left"
           />
 
@@ -218,19 +239,28 @@ export default class Cmp extends Component {
             style={{
               top: -8,
               left: width / 2 - 8,
+              transform: `scale(${100 / zoom})`,
             }}
             data-direction="top"
           />
 
           <li
             className={styles.stretchDot}
-            style={{ top: -8, left: width - 8 }}
+            style={{
+              top: -8,
+              left: width - 8,
+              transform: `scale(${100 / zoom})`,
+            }}
             data-direction="top right"
           />
 
           <li
             className={styles.stretchDot}
-            style={{ top: height / 2 - 8, left: width - 8 }}
+            style={{
+              top: height / 2 - 8,
+              left: width - 8,
+              transform: `scale(${100 / zoom})`,
+            }}
             data-direction="right"
           />
 
@@ -239,6 +269,7 @@ export default class Cmp extends Component {
             style={{
               top: height - 8,
               left: width - 8,
+              transform: `scale(${100 / zoom})`,
             }}
             data-direction="bottom right"
           />
@@ -248,6 +279,7 @@ export default class Cmp extends Component {
             style={{
               top: height - 8,
               left: width / 2 - 8,
+              transform: `scale(${100 / zoom})`,
             }}
             data-direction="bottom"
           />
@@ -257,6 +289,7 @@ export default class Cmp extends Component {
             style={{
               top: height - 8,
               left: -8,
+              transform: `scale(${100 / zoom})`,
             }}
             data-direction="bottom left"
           />
@@ -265,6 +298,7 @@ export default class Cmp extends Component {
             style={{
               top: height / 2 - 8,
               left: -8,
+              transform: `scale(${100 / zoom})`,
             }}
             data-direction="left"
           />
@@ -274,10 +308,23 @@ export default class Cmp extends Component {
             style={{
               top: height + 8,
               left: width / 2 - 8,
+              transform: `scale(${100 / zoom})`,
             }}
             onMouseDown={this.rotate}
           />
         </ul>
+
+        {selected && this.state.showContextMenu && (
+          <ContextMenu
+            index={index}
+            style={{
+              top: style.top,
+              left: style.left + width / 2,
+              transform: `scale(${100 / zoom})`,
+            }}
+            cmp={cmp}
+          />
+        )}
       </div>
     );
   }

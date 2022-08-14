@@ -124,7 +124,7 @@ export default class Canvas {
   // 新增组件
   addCmp = (_cmp) => {
     // 1.更新画布数据
-    const cmp = { key: getOnlyKey(), ..._cmp };
+    const cmp = { ..._cmp, key: getOnlyKey() };
     this.canvas.cmps.push(cmp);
     // 2.新增的组件设置为选中
     this.setSelectedCmpIndex(this.canvas.cmps.length - 1);
@@ -174,12 +174,58 @@ export default class Canvas {
     this.updateApp();
   };
 
+  // 删除组件
+  deleteCmp = (selectedIndex) => {
+    console.log("index: ", selectedIndex);
+    this.canvas.cmps.splice(selectedIndex, 1);
+    this.selectedCmpIndex = -1;
+    this.updateApp();
+    this.recordCanvasChangeHistory();
+  };
+
+  // 上移
+  addCmpIndex = (cmpIndex) => {
+    const cmps = this.getCanvasCmps();
+    // 已经在最顶层，直接退出操作
+    const targetIndex = cmpIndex + 1;
+    if (targetIndex >= cmps.length) {
+      return;
+    }
+
+    const temp = cmps[cmpIndex];
+    this.canvas.cmps[cmpIndex] = this.canvas.cmps[targetIndex];
+    this.canvas.cmps[targetIndex] = temp;
+
+    this.selectedCmpIndex = targetIndex;
+    this.updateApp();
+    this.recordCanvasChangeHistory();
+  };
+
+  // 上移
+  subCmpIndex = (cmpIndex) => {
+    const cmps = this.getCanvasCmps();
+    // 已经在最顶层，直接退出操作
+    const targetIndex = cmpIndex - 1;
+    if (targetIndex < 0) {
+      return;
+    }
+
+    const temp = cmps[cmpIndex];
+    this.canvas.cmps[cmpIndex] = this.canvas.cmps[targetIndex];
+    this.canvas.cmps[targetIndex] = temp;
+
+    this.selectedCmpIndex = targetIndex;
+    this.updateApp();
+    this.recordCanvasChangeHistory();
+  };
+
   getPublicCanvas = () => {
     const obj = {
       getCanvas: this.getCanvas,
       setCanvas: this.setCanvas,
       getCanvasCmps: this.getCanvasCmps,
       addCmp: this.addCmp,
+      deleteCmp: this.deleteCmp,
       subscribe: this.subscribe,
       setSelectedCmpIndex: this.setSelectedCmpIndex,
       updateSelectedCmp: this.updateSelectedCmp,
@@ -189,6 +235,9 @@ export default class Canvas {
       recordCanvasChangeHistory: this.recordCanvasChangeHistory,
       goPrevCanvasHistory: this.goPrevCanvasHistory,
       goNextCanvasHistory: this.goNextCanvasHistory,
+      // 修改层级
+      subCmpIndex: this.subCmpIndex,
+      addCmpIndex: this.addCmpIndex,
     };
     return obj;
   };
