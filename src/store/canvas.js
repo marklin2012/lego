@@ -201,9 +201,10 @@ export default class Canvas {
     this.recordCanvasChangeHistory();
   };
 
-  // 上移
+  // 下移
   subCmpIndex = (cmpIndex) => {
     const cmps = this.getCanvasCmps();
+    console.log("subIndex:", cmpIndex);
     // 已经在最顶层，直接退出操作
     const targetIndex = cmpIndex - 1;
     if (targetIndex < 0) {
@@ -215,6 +216,41 @@ export default class Canvas {
     this.canvas.cmps[targetIndex] = temp;
 
     this.selectedCmpIndex = targetIndex;
+    this.updateApp();
+    this.recordCanvasChangeHistory();
+  };
+
+  // 置顶
+  topZIndex = (cmpIndex) => {
+    const cmps = this.getCanvasCmps();
+    // 已经在最顶层，直接退出操作
+    if (cmpIndex >= cmps.length - 1) {
+      return;
+    }
+
+    this.canvas.cmps = cmps
+      .slice(0, cmpIndex)
+      .concat(cmps.slice(cmpIndex + 1))
+      .concat(cmps[cmpIndex]);
+
+    this.selectedCmpIndex = cmps.length - 1;
+    this.updateApp();
+    this.recordCanvasChangeHistory();
+  };
+
+  // 置底
+  bottomZIndex = (cmpIndex) => {
+    const cmps = this.getCanvasCmps();
+    // 已经在最顶层，直接退出操作
+    if (cmpIndex <= 0) {
+      return;
+    }
+
+    this.canvas.cmps = [cmps[cmpIndex]]
+      .concat(cmps.slice(0, cmpIndex))
+      .concat(cmps.slice(cmpIndex + 1));
+
+    this.selectedCmpIndex = 0;
     this.updateApp();
     this.recordCanvasChangeHistory();
   };
@@ -238,6 +274,8 @@ export default class Canvas {
       // 修改层级
       subCmpIndex: this.subCmpIndex,
       addCmpIndex: this.addCmpIndex,
+      topZIndex: this.topZIndex,
+      bottomZIndex: this.bottomZIndex,
     };
     return obj;
   };
