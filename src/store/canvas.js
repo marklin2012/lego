@@ -175,8 +175,7 @@ export default class Canvas {
   };
 
   // 删除组件
-  deleteCmp = (selectedIndex) => {
-    console.log("index: ", selectedIndex);
+  deleteCmp = (selectedIndex = this.selectedCmpIndex) => {
     this.canvas.cmps.splice(selectedIndex, 1);
     this.selectedCmpIndex = -1;
     this.updateApp();
@@ -184,7 +183,7 @@ export default class Canvas {
   };
 
   // 上移
-  addCmpIndex = (cmpIndex) => {
+  addCmpIndex = (cmpIndex = this.selectedCmpIndex) => {
     const cmps = this.getCanvasCmps();
     // 已经在最顶层，直接退出操作
     const targetIndex = cmpIndex + 1;
@@ -202,9 +201,8 @@ export default class Canvas {
   };
 
   // 下移
-  subCmpIndex = (cmpIndex) => {
+  subCmpIndex = (cmpIndex = this.selectedCmpIndex) => {
     const cmps = this.getCanvasCmps();
-    console.log("subIndex:", cmpIndex);
     // 已经在最顶层，直接退出操作
     const targetIndex = cmpIndex - 1;
     if (targetIndex < 0) {
@@ -221,7 +219,7 @@ export default class Canvas {
   };
 
   // 置顶
-  topZIndex = (cmpIndex) => {
+  topZIndex = (cmpIndex = this.selectedCmpIndex) => {
     const cmps = this.getCanvasCmps();
     // 已经在最顶层，直接退出操作
     if (cmpIndex >= cmps.length - 1) {
@@ -239,7 +237,7 @@ export default class Canvas {
   };
 
   // 置底
-  bottomZIndex = (cmpIndex) => {
+  bottomZIndex = (cmpIndex = this.selectedCmpIndex) => {
     const cmps = this.getCanvasCmps();
     // 已经在最顶层，直接退出操作
     if (cmpIndex <= 0) {

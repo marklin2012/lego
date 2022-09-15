@@ -2,52 +2,43 @@ import { useContext } from "react";
 import { useCanvasByContext } from "../../../store/hooks";
 import styles from "./index.less";
 import classNames from "classnames";
+import { cloneDeep } from "lodash";
 
-export default function ContextMenu({
-  index,
-  style,
-  cmp,
-  hideShowContextMenu,
-}) {
+export default function ContextMenu({ style }) {
   const canvas = useCanvasByContext();
+  const cmp = canvas.getSelectedCmp();
   const copy = (e) => {
     e.stopPropagation();
 
-    const newCmp = JSON.parse(JSON.stringify(cmp));
+    const newCmp = cloneDeep(cmp);
     newCmp.style.top += 40;
     newCmp.style.left += 40;
     canvas.addCmp(newCmp);
-    hideShowContextMenu();
   };
 
   const del = (e) => {
     e.stopPropagation();
-    canvas.deleteCmp(index);
-    hideShowContextMenu();
+    canvas.deleteCmp();
   };
 
   const addCmpIndex = (e) => {
     e.stopPropagation();
-    canvas.addCmpIndex(index);
-    hideShowContextMenu();
+    canvas.addCmpIndex();
   };
 
   const subCmpIndex = (e) => {
     e.stopPropagation();
-    canvas.subCmpIndex(index);
-    hideShowContextMenu();
+    canvas.subCmpIndex();
   };
 
   const topZIndex = (e) => {
     e.stopPropagation();
-    canvas.topZIndex(index);
-    hideShowContextMenu();
+    canvas.topZIndex();
   };
 
   const bottomZIndex = (e) => {
     e.stopPropagation();
-    canvas.bottomZIndex(index);
-    hideShowContextMenu();
+    canvas.bottomZIndex();
   };
 
   return (

@@ -171,7 +171,10 @@ export default function EditCmp(props) {
           className={styles.itemRight}
           color={style.borderColor || "#ffffff00"}
           onChangeComplete={(e) =>
-            handleStyleChange(null, { name: "borderColor", value: e.hex })
+            handleStyleChange(null, {
+              name: "borderColor",
+              value: `rgba(${Object.values(e.rgb).join(",")})`,
+            })
           }
         />
       </Item>
@@ -182,7 +185,10 @@ export default function EditCmp(props) {
             className={styles.itemRight}
             color={style.color}
             onChangeComplete={(e) =>
-              handleStyleChange(null, { name: "color", value: e.hex })
+              handleStyleChange(null, {
+                name: "color",
+                value: `rgba(${Object.values(e.rgb).join(",")})`,
+              })
             }
           />
         </Item>
@@ -194,7 +200,10 @@ export default function EditCmp(props) {
             className={styles.itemRight}
             color={style.backgroundColor}
             onChangeComplete={(e) =>
-              handleStyleChange(null, { name: "backgroundColor", value: e.hex })
+              handleStyleChange(null, {
+                name: "backgroundColor",
+                value: `rgba(${Object.values(e.rgb).join(",")})`,
+              })
             }
           />
         </Item>
