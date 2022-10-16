@@ -39,9 +39,10 @@ export default class Rotate extends Component {
       let deg = (360 * Math.atan2(disY, disX)) / (2 * Math.PI) - 90;
 
       deg = parseInt(deg);
+      console.log("xxx:", typeof (deg - transform));
 
-      this.context.updateSelectedCmp({
-        transform: deg,
+      this.context.updateAssemblyCmps({
+        transform: deg - transform,
       });
     };
 

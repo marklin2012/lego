@@ -65,6 +65,13 @@ export default function Center(props) {
       return;
     }
 
+    if (e.metaKey && e.code === "KeyA") {
+      // 选中所有组件
+      const allCmps = canvas.getCanvasCmps();
+      canvas.addAndUpdateAssembly(Object.keys(allCmps));
+      return;
+    }
+
     const selectedCmp = canvas.getSelectedCmp();
     if (!selectedCmp) {
       return;
@@ -76,25 +83,24 @@ export default function Center(props) {
 
     e.preventDefault();
     e.stopPropagation();
-    const { top, left } = selectedCmp.style;
-    const newStyle = { top, left };
+    const newStyle = {};
     switch (e.keyCode) {
       case 37: // 左
-        newStyle.left -= 1;
+        newStyle.left = -1;
         break;
       case 38: // 上
-        newStyle.top -= 1;
+        newStyle.top = -1;
         break;
       case 39: // 右
-        newStyle.left += 1;
+        newStyle.left = 1;
         break;
       case 40: // 下
-        newStyle.top += 1;
+        newStyle.top = 1;
         break;
       default:
         break;
     }
-    canvas.updateSelectedCmp(newStyle);
+    canvas.updateAssemblyCmps(newStyle);
     // 记录历史
     canvas.recordCanvasChangeHistory();
   };

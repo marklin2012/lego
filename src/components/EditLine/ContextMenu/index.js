@@ -13,12 +13,12 @@ export default function ContextMenu({ style }) {
     const newCmp = cloneDeep(cmp);
     newCmp.style.top += 40;
     newCmp.style.left += 40;
-    canvas.addCmp(newCmp);
+    canvas.addAssemblyCmps();
   };
 
   const del = (e) => {
     e.stopPropagation();
-    canvas.deleteCmp();
+    canvas.deleteCmps();
   };
 
   const addCmpIndex = (e) => {
@@ -41,26 +41,32 @@ export default function ContextMenu({ style }) {
     canvas.bottomZIndex();
   };
 
+  const hasAssembly = canvas.hasAssembly();
+
   return (
     <ul className={classNames(styles.main)} style={style}>
       <li className={styles.item} onClick={copy}>
-        复制
+        复制组件
       </li>
       <li className={styles.item} onClick={del}>
-        删除
+        删除组件
       </li>
-      <li className={styles.item} onClick={addCmpIndex}>
-        上移一层
-      </li>
-      <li className={styles.item} onClick={subCmpIndex}>
-        下移一层
-      </li>
-      <li className={styles.item} onClick={topZIndex}>
-        置顶
-      </li>
-      <li className={styles.item} onClick={bottomZIndex}>
-        置底
-      </li>
+      {hasAssembly && (
+        <>
+          <li className={styles.item} onClick={addCmpIndex}>
+            上移一层
+          </li>
+          <li className={styles.item} onClick={subCmpIndex}>
+            下移一层
+          </li>
+          <li className={styles.item} onClick={topZIndex}>
+            置顶
+          </li>
+          <li className={styles.item} onClick={bottomZIndex}>
+            置底
+          </li>
+        </>
+      )}
     </ul>
   );
 }

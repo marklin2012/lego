@@ -51,12 +51,7 @@ export default class EditLine extends Component {
       disX = disX * (100 / zoom);
       disY = disY * (100 / zoom);
 
-      const oldStyle = cmp;
-
-      const top = cmp.style.top + disY;
-      const left = cmp.style.left + disX;
-
-      this.context.updateSelectedCmp({ top, left });
+      this.context.updateAssemblyCmps({ top: disY, left: disX });
 
       startX = x;
       startY = y;
